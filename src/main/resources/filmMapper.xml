@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lsm.mapper.FilmMapper">
+
+	<insert id="insertFilm" parameterType="Film" useGeneratedKeys="true"
+		keyColumn="film_id" keyProperty="filmId">
+
+		insert into film(
+		<trim>
+			<if test="title!=null">title,</if>
+			<if test="description!=null">description,</if>
+			<if test="languageId!=null">language_id</if>
+		</trim>
+		)values(
+		<trim>
+			<if test="title!=null">#{title},</if>
+			<if test="description!=null">#{description},</if>
+			<if test="languageId!=null">#{languageId}</if>
+		</trim>
+		)
+
+	</insert>
+
+	<resultMap type="Film" id="filmMap">
+		<id column="film_id" property="filmId"></id>
+		<result column="description" property="description" />
+		<result column="language_id" property="languageId" />
+		<result column="title" property="title"/>
+		<result column="languageName" property="languageName"/>
+	</resultMap>
+
+	<select id="queryByFileName" parameterType="Film" resultMap="filmMap">
+		select film_id,description,language_id from film where title=#{title}
+	</select>
+	
+	<select id="queryByPage" parameterType="Page" resultMap="filmMap">
+	   
+	   select title,film_id,description,name languageName from film f,language l where f.language_id=l.language_id and title like concat(concat('%',#{t.title}),'%') limit #{offset},#{pageSize}
+	
+	</select>
+	
+	<select id="queryCount" parameterType="Film" resultType="int">
+	  select count(1) from film where title like concat(concat('%',#{title}),'%')
+	</select>
+	
+	<delete id="deleteById" parameterType="int">
+	   delete from film where film_id=#{id}
+	</delete>
+	
+	<update id="updateOne" parameterType="Film">
+	   UPDATE film 
+	   <set>
+	      <if test="title!=null"> title=#{title},</if>
+	      <if test="description!=null">description=#{description},</if>
+	      <if test="languageId!=null">language_id=#{languageId}</if>
+	   </set>
+	   where film_id=#{filmId}
+	</update>
+
+</mapper>

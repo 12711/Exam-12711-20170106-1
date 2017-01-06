@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>查询主界面</title>
+<link rel="stylesheet"
+	href="https://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+<script
+	src="https://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
+<script
+	src="https://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<script type="application/html" id="rowTempalte">
+    <tr style="height:60px"><td style="width:100px;"></td><td></td><td></td><td style="width:100px"></td><td style="width:150px"></td></tr>
+</script>
+
+
+
+</head>
+<body>
+	<div class="container ">
+		<div class="row " style="margin-top: 10px">
+			<div class="form-horizontal" role="form">
+				<div class="form-group col-sm-7">
+					<div class="col-sm-7 pull-right">
+						<input type="text" class="form-control" id="title"
+							placeholder="请输入电影名字">
+					</div>
+				</div>
+
+				<div class="form-group col-sm-4 ">
+					<div class="col-sm-offset-2 col-sm-4 col-sm-pull-1 text-left">
+						<button id="query" class="btn btn-info">查询</button>
+					</div>
+					<div class=" col-sm-2 col-sm-pull-1 text-left">
+						<button id="insert" class="btn btn-warning" style="width:100pz">新增</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="table-responsive">
+				<table class="table" id="table" style="height: 530px">
+					<caption style="margin-left: 20px">
+						<h2>电影列表</h2>
+					</caption>
+
+					<thead>
+						<tr>
+							<th>电影编号</th>
+							<th>电影名</th>
+							<th>电影描述</th>
+							<th>电影语言</th>
+						</tr>
+					</thead>
+					<tbody>
+
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="row">
+
+			<div>
+				<div class="col-sm-3">
+					<div class="col-sm-5">
+						<span>每页的数量:</span>
+					</div>
+					<div class="col-sm-7">
+						<select class="form-control " id="pageNum">
+							<option value="10">10</option>
+							<option value="20">20</option>
+							<option value="30">50</option>
+						</select>
+					</div>
+				</div>
+				<ul class="pagination col-sm-4" id="pagination" style="margin: 0"
+					class="col-sm-12">
+					<li><a href="javascript:;">&lt;&lt;</a></li>
+					<li><a href="javascript:;">&gt;&gt;</a></li>
+				</ul>
+				<div class="col-sm-5">
+					<div class="col-sm-6">
+						<div class="col-sm-12">
+							共<span id="pagecount"></span>页/当前页为第<span id="pageindex"></span>页
+						</div>
+					</div>
+					<div class="col-sm-3">
+						<input id="page1" type="number" class="form-control" min="1">
+
+					</div>
+					<button id="go" class="btn btn-primary">跳转</button>
+
+				</div>
+			</div>
+		</div>
+		<div class="modal fade" id="myModal" tabindex="-1" role="dialog"
+			aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"
+							aria-hidden="true">&times;</button>
+						<h4 class="modal-title" id="myModalLabel">修改信息</h4>
+					</div>
+					<div class="modal-body" style="height: 350px">
+						<div class="form-horizontal" role="form">
+							<div class="form-group ">
+								<div class="col-sm-2"></div>
+
+								<div class="col-sm-7">
+									<input type="text" class="hidden" style="margin-left: -50px"
+										disabled="disabled" class="form-control pull-left" id="filmId">
+								</div>
+							</div>
+							<div class="form-group ">
+								<div class="col-sm-2"></div>
+								<div class="col-sm-3">
+									<label style="margin-top: 5px;">电影名字</label>
+								</div>
+								<div class="col-sm-7">
+									<input type="text" style="margin-left: -50px"
+										class="form-control pull-left" id="title12">
+								</div>
+							</div>
+
+							<div class="form-group ">
+								<div class="col-sm-2"></div>
+								<div class="col-sm-3">
+									<label for="title" style="margin-top: 5px;">电影描述</label>
+								</div>
+								<div class="col-sm-7">
+									<input type="text" style="margin-left: -50px"
+										class="form-control pull-left" id="filmDescription">
+								</div>
+							</div>
+							<div class="form-group ">
+								<div class="col-sm-2"></div>
+								<div class="col-sm-3">
+									<label for="language" style="margin-top: 5px;">语种</label>
+								</div>
+								<div class="col-sm-7">
+									<!-- <input type="text" style="margin-left: -50px"
+										class="form-control pull-left" id="language"
+										placeholder="请输入电影名字"> -->
+									<select id="language" style="margin-left: -50px"
+										class="form-control">
+										<option value=""></option>
+									</select>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<div class="col-sm-2"></div>
+								<div class="col-sm-3">
+									<button id="submitUpdate" style="width: 350px"
+										class="btn btn-info">提交</button>
+								</div>
+							</div>
+						</div>
+					</div>
+
+				</div>
+
+			</div>
+
+		</div>
+
+
+	</div>
+
+
+	<script type="text/javascript">
+	   
+	
+		$('document').ready(function(){
+			window.pagevar={
+					page:1,
+					pageSize:$("#pageNum").val(),
+					title:'',
+					totle:0,
+					target:1
+				}
+			query(pagevar);
+			$("#pageindex").text(window.pagevar.page);
+			
+			
+			/* 新增 */
+			$("#insert").click(function(){
+			   window.location.href="insert.html"
+			});
+			
+			
+			
+			/* 头部表单查询 */
+			$("#query").click(function(){
+				
+				window.pagevar.page=1;
+				var page={
+						title:$("#title").val(),
+						pageSize:$("#pageNum").val(),
+				}
+				$("#pageindex").text(window.pagevar.page);
+		        
+				window.pagevar.title=page.title;
+				query(page);
+			});
+			
+			/* 上一页 */
+			$('#pagination').children('li:first').click(function(){
+				if(window.pagevar.page==(window.pagevar.target*1)&&window.pagevar.page>=5) window.pagevar.target=(window.pagevar.target*1-4);
+				
+				if(window.pagevar.page>1)
+				window.pagevar.page=window.pagevar.page-1;
+				$("#pageindex").text(window.pagevar.page);
+				query(window.pagevar);
+				
+			});
+			
+			/* 下一页 */
+			$('#pagination').children('li:last').click(function(){
+				if(window.pagevar.page<window.pagevar.totle){
+				if(window.pagevar.page==(window.pagevar.target*1+4)) window.pagevar.target=(window.pagevar.target*1+4);
+                
+				window.pagevar.page=window.pagevar.page*1+1;
+				}
+				$("#pageindex").text(window.pagevar.page);
+				query(window.pagevar);
+				
+			});
+			
+			/* 当每页的数量变化是 */
+			$("#pageNum").change(function(){
+				window.pagevar.page=1;
+				window.pagevar.pageSize=$('#pageSize').val();
+				$("#pageindex").text(window.pagevar.page);
+			
+				query(window.pagevar);
+			});
+			
+			/* 直接输入页码就行查询 */
+			$("#go").click(function(){
+				if($('#page1').val()<=window.pagevar.totle){
+				window.pagevar.page=$('#page1').val();
+				window.pagevar.title=$("#title").val(),
+				window.pagevar.pageSize=$('#pageSize').val();
+				$("#pageindex").text(window.pagevar.page);
+				console.log((window.pagevar.title)+"---000000000"+$("#title").val());
+				window.pagevar.target=$('#page1').val()/4*4;
+				query(window.pagevar);
+				}else{
+					alert("输入的数据有误,请重新输入!");
+				}
+			});
+			
+		});
+		
+		/* 为编辑页面绑定值 */
+		
+		function toupdate(obj){
+			console.log(obj);
+			var tds=$(obj).parent().siblings();
+			
+			$.ajax({
+				 url:'language/all',
+				 type:'GET',
+				 dataType:'json',
+				 success:function(data){
+					 console.log(data.films);
+					 window.lang=[];
+					 $("#language").children("option").remove();
+					 for(var i=0;i<data.films.length;i++){
+					 var template=" <option value='"+data.films[i].languageId+"'>"+data.films[i].name+"</option>";
+					  $("#language").append($(template));
+					  lang.push(data.films[i].name)
+					 }
+					}
+			  });
+			
+			
+			console.log(tds);
+			
+			$("#filmId").val($(tds[0]).text());
+			$("#title12").val($(tds[1]).text());
+			$("#filmDescription").val($(tds[2]).text());
+			$("#language").val($(tds[3]).text());
+		}
+		
+		
+		/* 提交修改 */
+		$("#submitUpdate").click(function(){
+			var id=$("#filmId").val();
+			var title=$("#title12").val();
+			var desc=$("#filmDescription").val();
+			var time=$("#language").val();
+			
+			console.log(time);
+			
+			var datas={
+					filmId:id,
+					title:title,
+					description:desc,
+					languageId:time
+			}
+			console.dir(JSON.stringify(datas));
+			datas=JSON.stringify(datas);
+			$.ajax({
+				url:"file/update",
+				data:datas,
+				contentType:"application/json",
+				type:"POST",
+				async:false,
+				success:function(data){
+					alert("修改成功!请点击关闭")
+				
+					var tds=$("#a"+id).parent().siblings();
+					
+					$(tds[1]).text($("#title12").val());
+					$(tds[2]).text($("#filmDescription").val());
+					
+					console.log(lang);
+					$(tds[3]).text(lang[$("#language").val()-1]);
+					
+					$('#myModal').modal('hide');
+					
+				}
+			});
+		});
+
+
+		
+		
+		/* 刷新页码 */
+		function refreshPage(num){
+			 $('#pagination').children('li.page').remove();
+			 
+			for(var i=window.pagevar.target;i<=window.pagevar.target*1+4;i++){
+				var template="<li class='page'><a href='javascript:;'></a></li>";
+				
+				var $first=$('#pagination').children('li:last');
+				var $template=$(template);
+				 if(i<=window.pagevar.totle){
+					 $template.children('a').text(i);
+					 if(i==window.pagevar.page){
+					 	$template.addClass('active');
+				 	}
+					 $first.before($template);
+				 }
+			}
+			
+			var $pre=$('#pagination').children('li:first');
+			 $pre.removeClass("disabled");
+			var $next=$('#pagination').children('li:last');
+			   $next.removeClass("disabled");
+			if(window.pagevar.page==1){
+				$pre.addClass("disabled");
+			}
+			if(window.pagevar.page==window.pagevar.totle){
+				$next.addClass("disabled");
+			}
+			/* 为页码添加点击事件 */
+			$("#pagination li.page").click(function(event){
+				  window.pagevar.page=$(event.target).text();
+				  $("#pageindex").text(window.pagevar.page);
+				  if($(event.target).text()==(window.pagevar.target*1+4)) window.pagevar.target=(window.pagevar.target*1+4);
+				  query(window.pagevar);
+			});
+			
+			
+		}
+
+		function query(queryInfo){
+
+			var initData={
+				 title:'',
+				 page:1,
+				 pageSize:10
+			};
+			
+			queryInfo=$.extend({},initData,queryInfo);
+			queryInfo.pageSize=$("#pageNum").val();
+			
+			$.ajax({
+				url:"file/querypage",
+				dataType : "json",
+				data : queryInfo,
+				type : "post",
+				success:function(datas){
+					$("#table tbody").empty();
+					if(window.pagevar.page==1) window.pagevar.target=1;
+					pagevar.totle=datas.totle;
+					$("#pagecount").text(pagevar.totle);
+					refreshPage(datas.totle);
+					for(var film of datas.films){
+						var $row=$($("#rowTempalte").html()).clone();
+						$row.children("td").eq(0).text(film.filmId)
+						$row.children("td").eq(1).text(film.title)
+						$row.children("td").eq(2).text(film.description)
+						$row.children("td").eq(3).text(film.languageName)
+						$row.children("td").eq(4).html("<a  class='btn btn-warning'  data-toggle='modal' data-target='#myModal' onclick='toupdate(this)'  >修改</a><a type='button' style='margin-left:5px' id='a"+film.filmId+"' onclick='deleteOne("+film.filmId+")' class='btn btn-danger'>删除</a>")
+						$("#table").append($row);	
+				  }
+					
+				}
+			});
+			
+		}
+		
+		function deleteOne(obj){
+			if(confirm('确定要执行此操作吗?')) 
+		    { 
+				var info={
+						filmId:obj
+				}
+				$.ajax({
+					url:'file/delete',
+					data:info,
+					type:'POST',
+					dataType:'json',
+					success:function(data){
+						console.log("shanchu");
+						alert(data.message)
+						if(data.message=='删除成功!'){
+							$($("#a"+obj).parent().parent()[0]).remove();
+						}
+					}
+				});
+				
+				
+		        return true; 
+		    } else{
+		    	 return false; 
+		    }
+		   
+			
+			
+		}
+		
+		
+		
+
+	</script>
+
+
+</body>
+</html>
